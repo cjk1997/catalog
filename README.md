@@ -27,3 +27,17 @@
     - Upsert (UPDATE/PUT)
     - UpdateOne/UpdateMany (UPDATE/PATCH)
     - Remove (DELETE)
+
+### Data Model
+
+ARTICLE
+```
+{
+    "title": STRING,
+    "author": STRING,
+    "link": URL as a STRING,
+    "description": STRING,
+    "topics": ARRAY,
+    "dateAdded": DATE
+}
+```
