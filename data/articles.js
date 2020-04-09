@@ -108,7 +108,7 @@ const updateArticle = (id, article) => {
                 reject(article);
             };
         };
-        MongoClient.connect(url, settings, async function(err, client) {
+        MongoClient.connect(url, settings, function(err, client) {
             if (err) {
                 reject(err);
             } else {
@@ -123,8 +123,19 @@ const updateArticle = (id, article) => {
                             if (err) {
                                 reject(err);
                             } else {
-                                console.log(data);
-                                resolve('Succesfully Updated');
+                                if (data.result.n > 0) {
+                                    collection.find({ _id }).toArray(
+                                        function(err, docs) {
+                                            if (err) {
+                                                reject(err);
+                                            } else {
+                                                resolve(docs[0]);
+                                            };
+                                        }
+                                    );
+                                } else {
+                                    resolve({ error: "Nothing Updated" })
+                                };
                             };
                         });
                 } catch (err) {
