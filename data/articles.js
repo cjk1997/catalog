@@ -12,7 +12,7 @@ const colName = 'articles';
 const settings = { useUnifiedTopology: true };
  
 // Validator function
-const invalidEntity = (article) => {
+const invalidArticle = (article) => {
     let result;
     if (!article.title) {
         result = 'Articls Require a Title';
@@ -67,7 +67,7 @@ const addArticle = (articles) => {
             reject({ msg: 'Need to send an Array of Articles' });
         } else {
             const invalidArticles = articles.filter((article) => {
-                const check = invalidArticles(article);
+                const check = invalidArticle(article);
                 if (check) {
                     article.invalid = check;
                 }
@@ -86,6 +86,9 @@ const addArticle = (articles) => {
                         console.log("Connected successfully to server to POST Articles");
                         const db = client.db(dbName);
                         const collection = db.collection(colName);
+                        articles.forEach((article) => { 
+                            article.dateAdded = new Date(Date.now()).toUTCString(); 
+                        });
                         const results = await collection.insertMany(articles);
                         resolve(results.ops);
                     };
