@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles</title>
+</head>
+<body>
+    <h2> Everything in our Catalog:</h2>
+    <ul>
+        <% for (let i = 0; i < data.length; i++) { %>
+            <li>
+                <%= data[i].title %> : <%= data[i].link %>
+                <button class="delete" id="<%= data[i]._id %>">Delete</button>
+            </li>
+        <% } %>
+    </ul>
+    <h3>Add to it:</h3>
+    <form>
+        <label id="title">Title:</label>
+        <input type="text" id="Title" name="Title"><br><br>
+        <label id="author">Author:</label>
+        <input type="text" id="Author" name="Author"><br><br>
+        <label id="link">Link:</label>
+        <input type="text" id="Link" name="Link"><br><br>
+        <label id="description">Description:</label>
+        <input type="text" id="Description" name="Description"><br><br>
+        <input type="button" id="Submit" value="Submit">
+    </form>
+    <script src="../javascripts/articles.js"></script>
+</body>
+</html>
