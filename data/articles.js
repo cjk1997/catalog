@@ -1,4 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 const assert = require('assert');
  
 // Connection URL
@@ -20,7 +21,7 @@ const invalidArticle = (article) => {
         result = 'Articles Require a Link';
     } else if (!validURL(article.link)) {
         result = 'Link not valid URL';
-    }
+    };
     return result;
 }
 
@@ -64,7 +65,7 @@ const addArticle = (articles) => {
     // const invalidArticles =
     const iou = new Promise((resolve, reject) => {
         if (!Array.isArray(articles)) {
-            reject({ msg: 'Need to send an Array of Articles' });
+            reject({ error: 'Need to send an Array of Articles' });
         } else {
             const invalidArticles = articles.filter((article) => {
                 const check = invalidArticle(article);
@@ -75,9 +76,9 @@ const addArticle = (articles) => {
             });
             if (invalidArticles.length > 0) {
                 reject({
-                    msg: "Some Articles were invalid",
+                    error: "Some Articles were invalid",
                     data: invalidArticles
-                })
+                });
             } else {
                 MongoClient.connect(url, settings, async function(err, client) {
                     if (err) {
@@ -99,7 +100,78 @@ const addArticle = (articles) => {
     return iou;
 };
 
+const updateArticle = (id, article) => {
+    const iou = new Promise((resolve, reject) => {
+        if (article.link) {
+            if (!validURL(article.link)) {
+                article.invalid = "Link not valid URL";
+                reject(article);
+            };
+        };
+        MongoClient.connect(url, settings, async function(err, client) {
+            if (err) {
+                reject(err);
+            } else {
+                console.log("Connect successfully to server to PATCH an Article");
+                const db = client.db(dbName);
+                const collection = db.collection(colName);
+                try {
+                    const _id = new ObjectID(id);
+                    collection.updateOne( { _id},
+                        { $set: { ...article } },
+                        function(err, data) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                console.log(data);
+                                resolve('Succesfully Updated');
+                            };
+                        });
+                } catch (err) {
+                    console.log(err);
+                    reject({ error: "ID has to be in ObjectID format" });
+                };
+            };
+        });
+    });
+    return iou;
+};
+
+const deleteArticle = (id) => {
+    const iou = new Promise((resolve, reject) => {
+        MongoClient.connect(url, settings, async function(err, client) {
+            if (err) {
+                reject(err);
+            } else {
+                console.log("Connected successfully to server to DELETE an Article");
+                const db = client.db(dbName);
+                const collection = db.collection(colName);
+                try {
+                    const _id = new ObjectID(id);
+                    collection.findOneAndDelete({ _id }, function(err, data) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            if(data.lastErrorObject.n > 0) {
+                                resolve(data.value);
+                            } else {
+                                resolve({ error: "ID doesn't exist" });
+                            }
+                        };
+                    });
+                } catch {
+                    console.log(data);
+                    reject({ error: "ID has to be in ObjectID format" });
+                };
+            };
+        });
+    });
+    return iou;
+};
+
 module.exports = {
     getArticles,
-    addArticle
+    addArticle,
+    updateArticle,
+    deleteArticle
 };
