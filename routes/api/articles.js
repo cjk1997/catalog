@@ -17,14 +17,14 @@ router.get('/', async function(req, res, next) {
 
 router.post('/', async function(req, res, next) {
     try {
-        const data = addArticle(req.body);
+        const data = await addArticle(req.body);
         res.send(data);
     } catch(err) {
         if (err.msg) {
-            res.status(400).send(err.msg);
+            res.status(400).send(err);
         } else {
             console.log(err);
-            res.status(400).send('Internal Server Issue, check logs');
+            res.status(500).send('Internal Server Issue, check logs');
 
         };
     };
