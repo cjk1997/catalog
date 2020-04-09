@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { 
     getArticles,
-    addArticle
+    addArticle,
+    deleteArticle
 } = require('../../data/articles');
 
 router.get('/', async function(req, res, next) {
@@ -26,6 +27,20 @@ router.post('/', async function(req, res, next) {
             console.log(err);
             res.status(500).send('Internal Server Issue, check logs');
 
+        };
+    };
+});
+
+router.delete('/:id', async function(req, res, next) {
+    try {
+        const data = await deleteArticle(req.params.id);
+        res.send(data);
+    } catch(err) {
+        if (err.msg) {
+            res.status(400).send(err);
+        } else {
+            console.log(err);
+            res.status(500).send('Internal Server Issue, check log');
         };
     };
 });
