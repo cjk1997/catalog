@@ -30,7 +30,7 @@ submit.addEventListener('click', submitHandler);
 const deleteHandler = () => {
     console.log('ID: ', event.target.id);
     fetch(`/api/articles/${event.target.id}`, {
-        method: 'delete'
+        method: 'DELETE'
     }).then(() => window.location.replace('/articles'));
 };
 
